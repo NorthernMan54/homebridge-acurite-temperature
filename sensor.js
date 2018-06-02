@@ -2,7 +2,7 @@
 
 var debug = require('debug')('acurite');
 var logger = require("mcuiot-logger").logger;
-var spawn = require('child_process').spawn;
+//var spawn = require('child_process').spawn;
 const moment = require('moment');
 var os = require("os");
 var hostname = os.hostname();
@@ -48,33 +48,20 @@ AcuritePlugin.prototype = {
       myAccessories.push(new acuriteAccessory(this.devices[i], this.log, i));
     }
     callback(myAccessories);
-    var proc = spawn('/usr/local/bin/rtl_433', ['-q', '-G']);
-    var start;
 
-    proc.stdout.on('data', function(message) {
-
-        var data = message.toString().split(" ");
-
-        switch (deviceModel(data)) {
-          case "Acurite":
-            // [ '2018-05-31',  '23:15:21',  'Acurite',  '986',  'sensor',  '0xc8e0',  '-',  '2F:',  '-17.2',  'C',  '1',
-            var unit = data[7];
-            var temperature = data[8];
-            var battery = "OK";
-            getDevice(unit).updateStatus(temperature, battery);
-            break;
-          default:
-            this.log("Undefined device", message.toString());
-        }
-
-      }.bind(this)
-
-    );
-    proc.stderr.on('data', function(message) {
-      this.log.error("stderr", message.toString());
-    }.bind(this));
-    proc.on('close', function(code, signal) {
-      this.log.error('rtl_433 closed');
+    var child_process = require('child_process');
+    var readline = require('readline');
+    var proc = child_process.spawn('/usr/local/bin/rtl_433', ['-q', '-F', 'json']);
+    readline.createInterface({
+      input: proc.stdout,
+      terminal: false
+    }).on('line', function(message) {
+      debug("Message", message.toString());
+      if (message.toString().startsWith('{')) {
+        var data = JSON.parse(message.toString());
+        getDevice(data.channel).updateStatus(data.temperature_C, data.battery);
+        // {"time" : "2018-06-02 08:27:20", "model" : "Acurite 986 Sensor", "id" : 3929, "channel" : "2F", "temperature_F" : -11, "temperature_C" : -23.889, "battery" : "OK", "status" : 0}
+      }
     }.bind(this));
   }
 }
@@ -91,7 +78,7 @@ acuriteAccessory.prototype = {
       this.log("Updating", this.name, temperature, battery);
       this.lastUpdated = Date.now();
       clearTimeout(this.timeout);
-      this.timeout = setTimeout(deviceTimeout.bind(this), refresh * 1000);
+      this.timeout = setTimeout(deviceTimeout.bind(this), 5 * 60 * 1000); // 5 minutes
       this.loggingService.addEntry({
         time: moment().unix(),
         temp: roundInt(temperature)
@@ -137,7 +124,7 @@ acuriteAccessory.prototype = {
         maxValue: 100
       });
 
-    this.timeout = setTimeout(deviceTimeout.bind(this), refresh * 1000);
+    this.timeout = setTimeout(deviceTimeout.bind(this), 5 * 60 * 1000); // 5 minutes
 
     this.temperatureService.log = this.log;
     this.loggingService = new FakeGatoHistoryService("weather", this.temperatureService, {
@@ -150,7 +137,7 @@ acuriteAccessory.prototype = {
 }
 
 function deviceTimeout() {
-  this.log("Timeout",this.name);
+  this.log("Timeout", this.name);
   this.temperatureService
     .getCharacteristic(Characteristic.CurrentTemperature).updateValue(new Error("No response"));
 }
@@ -166,8 +153,8 @@ function roundInt(string) {
 
 function getDevice(unit) {
   for (var i in myAccessories) {
-    if ( myAccessories[i].unit == unit )
+    if (myAccessories[i].unit == unit)
       return myAccessories[i];
   }
-  this.log.error("ERROR: unknown unit -",unit);
+  this.log.error("ERROR: unknown unit -", unit);
 }
