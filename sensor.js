@@ -155,5 +155,5 @@ function getDevice(unit) {
     if (myAccessories[i].unit == unit)
       return myAccessories[i];
   }
-  this.log.error("ERROR: unknown unit -", unit);
+  console.log("ERROR: unknown unit -", unit);
 }
