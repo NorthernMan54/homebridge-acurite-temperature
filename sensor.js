@@ -51,7 +51,7 @@ AcuritePlugin.prototype = {
 
     var child_process = require('child_process');
     var readline = require('readline');
-    var proc = child_process.spawn('/usr/local/bin/rtl_433', ['-q', '-F', 'json']);
+    var proc = child_process.spawn('/usr/local/bin/rtl_433', ['-q', '-F', 'json', '-C', 'si']);
     readline.createInterface({
       input: proc.stdout,
       terminal: false
