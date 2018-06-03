@@ -1,0 +1,21 @@
+{
+  "bridge": {
+    "name": "Maggie",
+    "username": "CC:22:3D:F3:CE:35",
+    "port": 51826,
+    "pin": "031-45-154"
+  },
+
+  "description": "HomeBridge HTTP Status Control",
+
+  "platforms": [{
+    "platform": "Acurite",
+    "name": "name",
+    "devices": {
+      "1R": "Fridge",
+      "2F": "Freezer"
+    }
+  }],
+
+  "accessories": []
+}

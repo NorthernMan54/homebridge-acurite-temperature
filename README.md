@@ -1,61 +1,46 @@
-# homebridge-bme280
+# homebridge-acurite-temperature
 
-[![NPM Downloads](https://img.shields.io/npm/dm/homebridge-bme280.svg?style=flat)](https://npmjs.org/package/homebridge-bme280)
+[![NPM Downloads](https://img.shields.io/npm/dm/homebridge-acurite-temperature.svg?style=flat)](https://npmjs.org/package/homebridge-acurite-temperature)
 
-[Bosch BME280](https://www.bosch-sensortec.com/bst/products/all_products/bme280)
-temperature/humidity/barometric pressure sensor service plugin for [Homebridge](https://github.com/nfarina/homebridge).
+After dealing with issues with my refrigerator not maintaining temperature, I bought the [AcuRite Digital Wireless Fridge and Freezer Thermometer](https://www.amazon.ca/gp/product/B004QJVU78/ref=oh_aui_detailpage_o00_s00?ie=UTF8&psc=1) so I could track what was happening.  And my first thought after buying it was where was the integration into HomeBridge?  So I quickly cobbled this together using a RPI, [RTL_433](https://github.com/merbanan/rtl_433) and a [RTL SDR](https://www.amazon.ca/NooElec-NESDR-Mini-Compatible-ESD-Safe/dp/B00PAGS0HO/ref=sr_1_8?ie=UTF8&qid=1528028132&sr=8-8&keywords=rtl+sdr+nooelec)
 
-![BME-280](images/IMG_0523.jpg)
 
-* Display of temperature, humidity and Barometric Pressure from a BME280 connected to a RaspberryPI.
+* Display of temperature and low battery
+* Also shows "not responding" if the sensor stops sending data
 * Archives results every hour to a google spreadsheet
 * Support the graphing feature of the Eve app for trends
 
-Uses [bme280-sensor](https://www.npmjs.com/package/bme280-sensor)
-
-# Build Instructions
-
-![RPI BME-280](images/IMG_0585.jpg)
-
-Detailed build instructions are available here. https://www.instructables.com/id/Connect-Your-RaspberryPI-to-the-BME280-Temperature/
+I have tested this on both a Mac and a RPI3
 
 ## Installation
-1.	Install Homebridge using `npm install -g homebridge`
-2.	Install this plugin `npm install -g homebridge-bme280`
-3.	Update your configuration file - see below for an example
-
-Connect the BME280 chip to the I2C bus
+1.	Install Homebridge using
+`sudo npm install -g homebridge`
+2.	Install this plugin
+`sudo npm install -g homebridge-acurite-temperature`
+3.	Install [RTL_433](https://github.com/merbanan/rtl_433) following the instructions [here](https://github.com/merbanan/rtl_433#installation-instructions)
+4. Configure homebridge
 
 ## Configuration
-* `accessory`: "BME280"
-* `name`: descriptive name
-* `name_temperature` (optional): descriptive name for the temperature sensor
-* `name_humidity` (optional): descriptive name for the humidity sensor
-* `refresh`: Optional, time interval for refreshing data in seconds, defaults to 60 seconds.
-* `storage`: Optional, storage of chart graphing data for history graphing, either fs or googleDrive, defaults to fs
-* `options`: options for [bme280-sensor](https://www.npmjs.com/package/bme280-sensor)
-* `spreadsheetId` ( optional ): Log data to a google sheet, this is part of the URL of your spreadsheet.  ie the spreadsheet ID in the URL https://docs.google.com/spreadsheets/d/abc1234567/edit#gid=0 is "abc1234567".
-
-If you get an I/O error, make sure the I2C address is correct (usually 0x76 or 0x77 depending on a jumper).
+* `platform`: "Acurite"
+* `name`: "Acurite"
+* `devices - 1F`: Name for fridge sensor
+* `devices - 2R`: Name for freezer sensor
+* `storage`: ( optional ) storage of chart graphing data for history graphing, either fs or googleDrive, defaults to fs
+* `spreadsheetId` ( optional ) Log data to a google sheet, this is part of the URL of your spreadsheet.  ie the spreadsheet ID in the URL https://docs.google.com/spreadsheets/d/abc1234567/edit#gid=0 is "abc1234567".
 
 Example configuration:
 
 ```json
-    "accessories": [
-        {
-            "accessory": "BME280",
-            "name": "Sensor",
-            "name_temperature": "Temperature",
-            "name_humidity": "Humidity",
-            "options": {
-              "i2cBusNo": 1,
-              "i2cAddress": "0x76"
-            }
-        }
-    ]
+"platforms": [{
+  "platform": "Acurite",
+  "name": "Acurite",
+  "devices": {
+    "1R": "Fridge",
+    "2F": "Freezer"
+  }
+}],
 ```
 
-This plugin creates two services: TemperatureSensor and HumiditySensor.
 
 ## Optional - Enable access to Google Sheets to log data
 
@@ -97,17 +82,7 @@ d. Click the Accept button.
 
 e. Copy the code you're given, paste it into the command-line prompt, and press Enter.
 
-## See also
-
-* [homebridge-ds18b20](https://www.npmjs.com/package/homebridge-ds18b20)
-* [homebridge-dht-sensor](https://www.npmjs.com/package/homebridge-dht-sensor)
-* [homebridge-dht](https://www.npmjs.com/package/homebridge-dht)
 
 ## Credits
-* RXSeger - Author and creator of the plugin
-* NorthernMan54 - Barometric Pressure and Device Polling
+* merbanan - RTL_433 Sensor decoder
 * simont77 - History Service
-
-## License
-
-MIT

@@ -2,7 +2,6 @@
 
 var debug = require('debug')('acurite');
 var logger = require("mcuiot-logger").logger;
-//var spawn = require('child_process').spawn;
 const moment = require('moment');
 var os = require("os");
 var hostname = os.hostname();
