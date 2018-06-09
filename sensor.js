@@ -60,7 +60,7 @@ AcuritePlugin.prototype = {
         var data = JSON.parse(message.toString());
         var device = getDevice(data.channel);
 
-        if ( device != nil )
+        if ( device != undefined )
           device.updateStatus(data.temperature_C, data.battery);
         // {"time" : "2018-06-02 08:27:20", "model" : "Acurite 986 Sensor", "id" : 3929, "channel" : "2F", "temperature_F" : -11, "temperature_C" : -23.889, "battery" : "OK", "status" : 0}
       }
@@ -159,5 +159,5 @@ function getDevice(unit) {
       return myAccessories[i];
   }
   console.log("ERROR: unknown unit -", unit);
-  return( nil );
+  return( undefined );
 }
