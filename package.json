@@ -1,6 +1,6 @@
 {
   "name": "homebridge-acurite-temperature",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "RTL_433 based temperature sensor for Homebridge",
   "main": "sensor.js",
   "scripts": {
