@@ -50,7 +50,8 @@ AcuritePlugin.prototype = {
 
     var child_process = require('child_process');
     var readline = require('readline');
-    var proc = child_process.spawn('/usr/local/bin/rtl_433', ['-q', '-F', 'json', '-C', 'si']);
+    var proc = child_process.spawn('/usr/local/bin/rtl_433', ['-q', '-F', 'json', '-C', 'si', '-G', '-f', '433925000']);
+    //input frequency of sensor in Hz
     readline.createInterface({
       input: proc.stdout,
       terminal: false
@@ -59,7 +60,7 @@ AcuritePlugin.prototype = {
       if (message.toString().startsWith('{')) {
         try {
           var data = JSON.parse(message.toString());
-          var device = getDevice(data.channel);
+          var device = getDevice(data.id);
 
           if (device != undefined)
             device.updateStatus(data.temperature_C, data.battery);
