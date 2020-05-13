@@ -2,6 +2,8 @@
 
 [![NPM Downloads](https://img.shields.io/npm/dm/homebridge-acurite-temperature.svg?style=flat)](https://npmjs.org/package/homebridge-acurite-temperature)
 
+# Please note I have changed approach and have switched to a more robust plugin [Homebridge-RTL](https://github.com/NorthernMan54/homebridge-rtl)  and have stopped further development on this particular plugin.
+
 After dealing with issues with my refrigerator not maintaining temperature, I bought the [AcuRite Digital Wireless Fridge and Freezer Thermometer](https://www.amazon.ca/gp/product/B004QJVU78/ref=oh_aui_detailpage_o00_s00?ie=UTF8&psc=1) so I could track what was happening.  And my first thought after buying it was where was the integration into HomeBridge?  So I quickly cobbled this together using a RPI, [RTL_433](https://github.com/merbanan/rtl_433) and a [RTL SDR](https://www.amazon.ca/NooElec-NESDR-Mini-Compatible-ESD-Safe/dp/B00PAGS0HO/ref=sr_1_8?ie=UTF8&qid=1528028132&sr=8-8&keywords=rtl+sdr+nooelec)
 
 
